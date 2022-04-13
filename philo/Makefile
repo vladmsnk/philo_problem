@@ -1,6 +1,6 @@
 NAME = philo
 
-SRC = ft_atoi.c philo.c utils.c
+SRC = ft_atoi.c philo.c utils.c simulation.c
 
 HDRS = philo.h 
 

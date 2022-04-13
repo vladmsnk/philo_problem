@@ -1,5 +1,15 @@
 #include "philo.h"
 
+void	destroy_mutexes(t_info *info)
+{
+	int	i;
+
+	i = 0;
+	while (i < info->num_of_philo)
+		pthread_mutex_destroy(&info->sharable.forks[i++]);
+	free(info->sharable.forks);
+}
+
 int	init_share(t_info *info)
 {
 	int	i;
@@ -39,16 +49,6 @@ int	init_params(t_info *info, int argc, char **argv)
 		return (1);
 	}
 	return (0);
-}
-
-void	destroy_mutexes(t_info *info)
-{
-	int	i;
-
-	i = 0;
-	while (i < info->num_of_philo)
-		pthread_mutex_destroy(&info->sharable.forks[i++]);
-	free(info->sharable.forks);
 }
 
 t_philo *init_philos(t_info *info)

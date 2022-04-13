@@ -27,11 +27,13 @@ typedef	struct s_philo
 {
 	int				id;
 	t_info			*info;
-	pthread_t		home_t;
 }	t_philo;
 
-int	ft_atoi(const char *str);
-int	init_params(t_info *info, int argc, char **argv);
-int	init_share(t_info *info);
-t_philo *init_philos(t_info *info);
+int		ft_atoi(const char *str);
+int		init_params(t_info *info, int argc, char **argv);
+int		init_share(t_info *info);
+t_philo	*init_philos(t_info *info);
+void	run_simulation(t_philo *philos);
+
+
 #endif
