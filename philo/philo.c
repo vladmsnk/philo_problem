@@ -11,6 +11,8 @@ int main(int argc, char **argv)
 		if (!philos)
 			return (0);
 		run_simulation(philos);
+		destroy_mutexes(&info);
+		printf("%s\n", "end");
 	}
 	return (1);
 }
