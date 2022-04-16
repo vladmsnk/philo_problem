@@ -8,7 +8,7 @@ OBJ = $(SRC:.c=.o)
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror -lpthread
+FLAGS = -Wall -Wextra -Werror -lpthread -fsanitize=thread
 
 all: $(NAME)
 
