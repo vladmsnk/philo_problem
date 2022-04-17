@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:14:34 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/04/17 19:16:11 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/04/17 20:17:36 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	test_philo_live(t_philo *philos, int num, int i, int *flags)
 	static int	sum;
 
 	if (philos[i].last_time_eat && get_time()
-		- philos[i].last_time_eat > philos[i].info->time_to_die)
+		- philos[i].last_time_eat > (unsigned long)philos[i].info->time_to_die)
 	{
 		print_info(&philos[i], "died");
 		philos->info->sharable.signal = 1;
@@ -97,10 +97,11 @@ int	monitoring(t_philo *philos)
 	num = philos[0].info->num_of_philo;
 	if (num == 1)
 	{
-		print_info(&philos[i], "died");
+		print_info(&philos[0], "died");
 		philos->info->sharable.signal = 1;
 		return (1);
 	}
+	flags = NULL;
 	if (philos[0].info->num_of_philo > 0)
 	{
 		flags = init_flags(num);

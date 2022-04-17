@@ -2,25 +2,56 @@ NAME = philo
 
 SRC = ft_atoi.c philo.c utils.c time_utils.c simulation.c print_helper.c
 
-HDRS = philo.h 
-
 OBJ = $(SRC:.c=.o)
+DEP = $(OBJ:.o=.d)
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror -lpthread
+CFLAGS = -Wall -Wextra -Werror -MMD 
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(HDRS)
-		$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ)
+		$(CC) -lpthread $(OBJ) -o $(NAME)
 
 clean:
-	rm -f $(OBJ)
+	$(RM) $(OBJ) $(DEP)
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
+
+include $(wildcard $(DEP))
+
+# NAME = philo
+
+# SRC = ft_atoi.c philo.c utils.c time_utils.c simulation.c print_helper.c
+
+# HDRS = philo.h 
+
+# OBJ = $(SRC:.c=.o)
+
+# CC = gcc
+
+# CFLAGS = -Wall -Wextra -Werror -lpthread
+
+# all: $(NAME)
+
+# %.o: %.c $(HDRS)
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+# $(NAME): $(OBJ)
+# 		$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
+# clean:
+# 	$(RM) $(OBJ)
+
+# fclean: clean
+# 	$(RM) $(NAME)
+
+# re: fclean all
+
+# .PHONY: all clean fclean re
