@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/04/17 19:12:48 by jjhezane          #+#    #+#             */
+/*   Updated: 2022/04/17 19:13:23 by jjhezane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -8,9 +20,9 @@
 # include <sys/types.h>
 # include <sys/time.h>
 
-typedef	struct s_share
+typedef struct s_share
 {
-	pthread_mutex_t *forks;
+	pthread_mutex_t	*forks;
 	pthread_mutex_t	cout;
 	int				signal;
 	int				started;
@@ -21,14 +33,14 @@ typedef struct s_info
 {
 	int				num_of_philo;
 	int				time_to_die;
-	int 			time_to_eat;
+	int				time_to_eat;
 	int				time_to_sleep;
 	int				num_each_must_eat;
 	unsigned long	time_of_start;
 	t_share			sharable;
 }	t_info;
 
-typedef	struct s_philo
+typedef struct s_philo
 {
 	int				id;
 	t_info			*info;

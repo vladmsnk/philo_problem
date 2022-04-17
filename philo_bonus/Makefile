@@ -1,8 +1,8 @@
-NAME = philo
+NAME = philo_bonus
 
-SRC = ft_atoi.c philo.c utils.c time_utils.c simulation.c print_helper.c
+SRC = 
 
-HDRS = philo.h 
+HDRS = philo_bonus.h 
 
 OBJ = $(SRC:.c=.o)
 

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   simulation.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/04/17 19:14:34 by jjhezane          #+#    #+#             */
+/*   Updated: 2022/04/17 19:16:11 by jjhezane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	handle_forks(t_philo *philo, int (*forker)(pthread_mutex_t *))
@@ -19,7 +31,6 @@ void	*philo_action(void *data)
 	}
 	while (!curr_philo->info->sharable.signal)
 	{
-		print_info(curr_philo, "is thinking");
 		handle_forks(curr_philo, pthread_mutex_lock);
 		print_info(curr_philo, "has taken a fork");
 		print_info(curr_philo, "has taken a fork");
@@ -30,52 +41,78 @@ void	*philo_action(void *data)
 		curr_philo->eat_amount++;
 		print_info(curr_philo, "is sleeping");
 		ft_usleep(curr_philo->info->time_to_sleep);
+		print_info(curr_philo, "is thinking");
 	}
 	return (NULL);
 }
 
-
-int test_philo_live(t_philo *philo)
+int	test_philo_live(t_philo *philos, int num, int i, int *flags)
 {
-	if (philo->last_time_eat && get_time() 
-				- philo->last_time_eat > philo->info->time_to_die)
+	static int	sum;
+
+	if (philos[i].last_time_eat && get_time()
+		- philos[i].last_time_eat > philos[i].info->time_to_die)
 	{
-		print_info(philo, "is died");
-		philo->info->sharable.signal = 1;
+		print_info(&philos[i], "died");
+		philos->info->sharable.signal = 1;
 		return (1);
 	}
-	if ( philo->eat_amount >= philo->info->num_each_must_eat)
-		return (2);
+	if (philos->info->num_each_must_eat > 0
+		&& philos[i].eat_amount >= philos->info->num_each_must_eat)
+	{
+		if (!flags[i])
+			sum++;
+		flags[i] = 1;
+	}
+	if (sum == num)
+	{
+		free(flags);
+		philos->info->sharable.signal = 1;
+		sum = 0;
+		return (1);
+	}
 	return (0);
+}
+
+int	*init_flags(int num)
+{
+	int	*flags;
+	int	i;
+
+	i = 0;
+	flags = (int *)malloc(sizeof(int) * num);
+	if (!flags)
+		return (NULL);
+	while (i < num)
+		flags[i++] = 0;
+	return (flags);
 }
 
 int	monitoring(t_philo *philos)
 {
 	int	i;
 	int	num;
-	int flag;
-	flag = 0;
+	int	*flags;
+
 	num = philos[0].info->num_of_philo;
 	if (num == 1)
 	{
-		print_info(&philos[i], "is died");
+		print_info(&philos[i], "died");
 		philos->info->sharable.signal = 1;
-		return 1;
+		return (1);
 	}
+	if (philos[0].info->num_of_philo > 0)
+	{
+		flags = init_flags(num);
+		if (!flags)
+			return (1);
+	}
+	i = 0;
 	while (1)
 	{
-		i = 0;
-		while (i < num)
-		{
-			if (philos[i].last_time_eat && get_time() 
-				- philos[i].last_time_eat > philos[i].info->time_to_die)
-			{
-				print_info(&philos[i], "is died");
-				philos->info->sharable.signal = 1;
-				return (1);
-			}
-			i++;
-		}
+		if (test_philo_live(philos, num, i, flags))
+			return (1);
+		i = (i == num) * 0 + (i != num) * (i + 1);
 	}
 	return (0);
 }
@@ -101,8 +138,9 @@ void	run_simulation(t_philo *philos)
 		i = 0;
 		while (i < num)
 		{
-			pthread_join(threads[i], NULL);;
+			pthread_join(threads[i], NULL);
 			i++;
 		}
 	}
+	free(threads);
 }
