@@ -1,26 +1,27 @@
 NAME = philo_bonus
 
-SRC = 
-
-HDRS = philo_bonus.h 
+SRC = ft_atoi.c philo.c utils.c time_utils.c simulation.c
 
 OBJ = $(SRC:.c=.o)
+DEP = $(OBJ:.o=.d)
 
 CC = gcc
 
-FLAGS = -Wall -Wextra -Werror -lpthread
+CFLAGS = -Wall -Wextra -Werror -MMD 
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(HDRS)
-		$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ)
+		$(CC) -lpthread $(OBJ) -o $(NAME)
 
 clean:
-	rm -f $(OBJ)
+	$(RM) $(OBJ) $(DEP)
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
+
+include $(wildcard $(DEP))
