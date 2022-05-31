@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vlad <vlad@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 18:20:30 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/05/09 14:42:05 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/05/25 15:43:14 by vlad             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,16 @@
 # include <semaphore.h>
 # include <string.h>
 # include <signal.h>
+# include <fcntl.h>
 
 # define SNAME "/mysem"
+# define SPRINT "/prsem"
 
 typedef	struct s_philo
 {
 	int				id;
 	unsigned long	last_time_eat;
+	unsigned int	curr_eat_amount;
 }	t_philo;
 
 typedef struct s_info
@@ -48,6 +51,7 @@ typedef struct s_info
 typedef struct s_share
 {
 	sem_t	*sem;
+	sem_t	*print_sem;
 	int		*pids;
 	t_info	info;
 	t_philo philo;
@@ -58,6 +62,7 @@ int	init_params(t_share *share, int argc, char **argv);
 int	init_share(t_share *share);
 int	ft_atoi(const char *str);
 unsigned long	get_time(void);
+void    print_helper(t_share *share, char *message);
 void	ft_usleep(int time_to_wait);
 void	run_simulation(t_share *share);
 

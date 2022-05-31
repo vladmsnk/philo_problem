@@ -1,27 +1,35 @@
-NAME = philo_bonus
+NAME =	philo_bonus
 
-SRC = ft_atoi.c philo.c utils.c time_utils.c simulation.c
+CC =	gcc
+CFLAGS =	-g -Wall -Wextra -Werror -MMD
 
-OBJ = $(SRC:.c=.o)
-DEP = $(OBJ:.o=.d)
+RM =	rm -rf
 
-CC = gcc
+SRC =   philo.c \
+		utils.c \
+		time_utils.c \
+		print_helper.c \
+		ft_atoi.c \
+		simulation.c \
 
-CFLAGS = -Wall -Wextra -Werror -MMD 
+INC =  philo.h \
 
-all: $(NAME)
+OBJS =	$(SRC:.c=.o)
+DEP =	$(SRC:.c=.d)
 
-$(NAME): $(OBJ)
-		$(CC) -lpthread $(OBJ) -o $(NAME)
+.PHONY :	all clean re fclean
+
+$(NAME):	$(OBJS)
+			${CC} ${CFLAGS} ${OBJS} -o ${NAME} -lpthread
+
+all: 		$(NAME)
 
 clean:
-	$(RM) $(OBJ) $(DEP)
+			$(RM) $(OBJS) $(DEP)
 
-fclean: clean
-	$(RM) $(NAME)
+fclean: 	clean
+			$(RM) $(NAME)
 
-re: fclean all
+re: 		fclean all
 
-.PHONY: all clean fclean re
-
-include $(wildcard $(DEP))
+-include $(DEP)

@@ -21,14 +21,22 @@ int	init_params(t_share *share, int argc, char **argv)
 	return (0);
 }
 
+
 int	init_share(t_share *share)
 {
 	int	num_of_p;
 
 	num_of_p = share->info.num_of_philo;
+	share->print_sem = sem_open(SPRINT, O_CREAT, 0644, 1);
+	if (share->print_sem == SEM_FAILED)
+		return (0);
 	share->sem = sem_open(SNAME, O_CREAT, 0644, num_of_p);
 	if (share->sem == SEM_FAILED)
+	{
+		sem_close(share->print_sem);
+		sem_unlink(SPRINT);
 		return (0);
+	}
 	share->pids = (int *)malloc(sizeof(int) * num_of_p);
 	if (!share->pids)
 	{
@@ -36,6 +44,9 @@ int	init_share(t_share *share)
 		sem_unlink(SNAME);
 		return (0);
 	}
+	share->philo.id = 0;
+	share->philo.last_time_eat = 0;
+	share->philo.curr_eat_amount = 0;
 	memset(share->pids, 1, num_of_p);
 	return (1);
 }
