@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/01 18:34:38 by jjhezane          #+#    #+#             */
+/*   Updated: 2022/06/01 18:42:43 by jjhezane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	init_params(t_share *share, int argc, char **argv)
@@ -14,14 +26,15 @@ int	init_params(t_share *share, int argc, char **argv)
 			share->info.num_each_must_eat = ft_atoi(argv[5]);
 		if (share->info.num_of_philo < 0 || share->info.time_to_die < 0
 			|| share->info.time_to_eat < 0 || share->info.time_to_sleep < 0
-			|| (share->info.num_each_must_eat != -1 && share->info.num_each_must_eat < 0))
+			|| (share->info.num_each_must_eat != -1
+				&& share->info.num_each_must_eat < 0))
 			return (0);
 		return (1);
 	}
 	return (0);
 }
 
-void close_sems(t_share *share)
+void	close_sems(t_share *share)
 {
 	sem_close(share->sem);
 	sem_close(share->print_sem);
@@ -30,9 +43,8 @@ void close_sems(t_share *share)
 	sem_unlink(SNAME);
 	sem_unlink(SPRINT);
 	sem_unlink(SDEAD);
-	sem_unlink("kills");
+	sem_unlink(SEMKILL);
 }
-
 
 int	init_sems(t_share *share)
 {
@@ -48,6 +60,7 @@ int	init_sems(t_share *share)
 		return (0);
 	}
 	share->dead_sem = sem_open(SDEAD, O_CREAT, 0644, 1);
+	share->print_kill_sem = sem_open(SEMKILL, O_CREAT, 0644, 1);
 	if (share->dead_sem == SEM_FAILED)
 	{
 		sem_close(share->print_sem);
@@ -56,10 +69,8 @@ int	init_sems(t_share *share)
 		sem_unlink(SDEAD);
 		return (0);
 	}
-	share->print_kill_sem = sem_open("kills", O_CREAT, 0644, 1);
 	return (1);
 }
-
 
 int	init_share(t_share *share)
 {

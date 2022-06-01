@@ -8,7 +8,7 @@ RM =	rm -rf
 SRC =   philo.c \
 		utils.c \
 		time_utils.c \
-		print_helper.c \
+		helper.c \
 		ft_atoi.c \
 		simulation.c \
 

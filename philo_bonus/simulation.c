@@ -6,30 +6,24 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 19:37:07 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/06/01 16:28:39 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:43:12 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "philo.h"
-
-void	handle_forks(sem_t *sem, int (*forker)(sem_t *))
-{
-	forker(sem);
-	forker(sem);
-}
+#include "philo.h"
 
 void	*monitoring(void *share)
 {
-	t_share *shr;
+	t_share	*shr;
 
 	shr = (t_share *)share;
 	while (1)
 	{
-		if (shr->philo.last_time_eat && get_time() 
-		- shr->philo.last_time_eat > (unsigned long)shr->info.time_to_die)
+		if (shr->philo.last_time_eat && get_time()
+			- shr->philo.last_time_eat > (unsigned long)shr->info.time_to_die)
 		{
 			sem_wait(shr->print_kill_sem);
-			print_helper(share, SKILL);
+			print_helper(share, "died");
 			sem_wait(shr->print_sem);
 			shr->killed = 1;
 			sem_post(shr->dead_sem);
@@ -66,7 +60,6 @@ void	start_philo_act(t_share *share)
 			print_helper(share, "is thinking");
 		}
 	}
-	
 }
 
 void	wait_all_pids(int *pids, int num_of_forks)
@@ -77,19 +70,6 @@ void	wait_all_pids(int *pids, int num_of_forks)
 	i = 0;
 	while (i < num_of_forks)
 		waitpid(pids[i++], &status, 0);
-}
-
-
-void	kill_all_pids(int *pids, int num_of_forks)
-{
-	int	i;
-
-	i = 0;
-	while (i < num_of_forks)
-	{
-		kill(pids[i++], SIGTERM);
-	}
-	
 }
 
 void	handle_killing(t_share	*share)
@@ -111,7 +91,7 @@ void	handle_killing(t_share	*share)
 
 void	run_simulation(t_share *share)
 {
-	pthread_t monitor;
+	pthread_t	monitor;
 
 	sem_wait(share->dead_sem);
 	while (share->philo.id < share->info.num_of_philo)

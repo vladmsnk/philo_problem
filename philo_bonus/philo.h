@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 18:20:30 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/06/01 16:28:32 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:36:31 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@
 # define SNAME "/mysem"
 # define SPRINT "/prsem"
 # define SDEAD "/dsem"
-# define SKILL "/skill"
+# define SEMKILL "/skill"
 
-typedef	struct s_philo
+typedef struct s_philo
 {
 	int				id;
 	unsigned long	last_time_eat;
-	int	curr_eat_amount;
+	int				curr_eat_amount;
 }	t_philo;
 
 typedef struct s_info
@@ -59,17 +59,17 @@ typedef struct s_share
 	int		*pids;
 	int		killed;
 	t_info	info;
-	t_philo philo;
+	t_philo	philo;
 }	t_share;
-
 
 int				init_params(t_share *share, int argc, char **argv);
 int				init_share(t_share *share);
 int				ft_atoi(const char *str);
 unsigned long	get_time(void);
-void    		print_helper(t_share *share, char *message);
+void			print_helper(t_share *share, char *message);
 void			ft_usleep(int time_to_wait);
 void			run_simulation(t_share *share);
 void			close_sems(t_share *share);
+void			handle_forks(sem_t *sem, int (*forker)(sem_t *));
 
 #endif

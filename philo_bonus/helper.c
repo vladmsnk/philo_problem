@@ -1,22 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_helper.c                                     :+:      :+:    :+:   */
+/*   helper.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/17 19:13:42 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/04/17 19:14:23 by jjhezane         ###   ########.fr       */
+/*   Created: 2022/06/01 18:31:25 by jjhezane          #+#    #+#             */
+/*   Updated: 2022/06/01 18:50:00 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	print_info(t_philo *philo, char *msg)
+void	print_helper(t_share *share, char *message)
 {
-	pthread_mutex_lock(&philo->info->sharable.cout);
-	if (!philo->info->sharable.signal)
-		printf("%lu %d %s\n",
-			get_time() - philo->info->time_of_start, philo->id, msg);
-	pthread_mutex_unlock(&philo->info->sharable.cout);
+	sem_wait(share->print_sem);
+	printf("%lu %d %s\n",
+			get_time() - share->info.time_of_start,
+			share->philo.id, message);
+	sem_post(share->print_sem);
+}
+
+void	handle_forks(sem_t *sem, int (*forker)(sem_t *))
+{
+	forker(sem);
+	forker(sem);
 }
