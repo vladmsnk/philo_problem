@@ -6,17 +6,11 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:14:34 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/04/17 20:17:36 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:28:54 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	handle_forks(t_philo *philo, int (*forker)(pthread_mutex_t *))
-{
-	forker(&philo->info->sharable.forks[philo->id - 1]);
-	forker(&philo->info->sharable.forks[philo->id % philo->info->num_of_philo]);
-}
 
 void	*philo_action(void *data)
 {
@@ -74,28 +68,12 @@ int	test_philo_live(t_philo *philos, int num, int i, int *flags)
 	return (0);
 }
 
-int	*init_flags(int num)
-{
-	int	*flags;
-	int	i;
-
-	i = 0;
-	flags = (int *)malloc(sizeof(int) * num);
-	if (!flags)
-		return (NULL);
-	while (i < num)
-		flags[i++] = 0;
-	return (flags);
-}
-
 int	monitoring(t_philo *philos)
 {
 	int	i;
-	int	num;
 	int	*flags;
 
-	num = philos[0].info->num_of_philo;
-	if (num == 1)
+	if (philos[0].info->num_of_philo == 1)
 	{
 		print_info(&philos[0], "died");
 		philos->info->sharable.signal = 1;
@@ -104,16 +82,17 @@ int	monitoring(t_philo *philos)
 	flags = NULL;
 	if (philos[0].info->num_of_philo > 0)
 	{
-		flags = init_flags(num);
+		flags = init_flags(philos[0].info->num_of_philo);
 		if (!flags)
 			return (1);
 	}
 	i = 0;
 	while (1)
 	{
-		if (test_philo_live(philos, num, i, flags))
+		if (test_philo_live(philos, philos[0].info->num_of_philo, i, flags))
 			return (1);
-		i = (i == num) * 0 + (i != num) * (i + 1);
+		i = (i == philos[0].info->num_of_philo) * 0
+			+ (i != philos[0].info->num_of_philo) * (i + 1);
 	}
 	return (0);
 }

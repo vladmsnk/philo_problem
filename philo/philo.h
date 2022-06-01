@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:12:48 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/04/17 19:13:23 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:29:17 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,6 @@ unsigned long	get_time(void);
 void			ft_usleep(int time_to_wait);
 void			print_info(t_philo *philo, char *msg);
 void			destroy_mutexes(t_info *info);
+void			handle_forks(t_philo *philo, int (*forker)(pthread_mutex_t *));
+int				*init_flags(int num);
 #endif

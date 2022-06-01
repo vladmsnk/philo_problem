@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:17:30 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/04/17 19:19:06 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/01 18:29:09 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,20 @@ int	init_share(t_info *info)
 	info->sharable.started = 0;
 	info->sharable.must_eat_passed = 0;
 	return (1);
+}
+
+int	*init_flags(int num)
+{
+	int	*flags;
+	int	i;
+
+	i = 0;
+	flags = (int *)malloc(sizeof(int) * num);
+	if (!flags)
+		return (NULL);
+	while (i < num)
+		flags[i++] = 0;
+	return (flags);
 }
 
 int	init_params(t_info *info, int argc, char **argv)
