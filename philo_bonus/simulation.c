@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlad <vlad@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 19:37:07 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/05/25 15:51:57 by vlad             ###   ########.fr       */
+/*   Updated: 2022/06/01 16:28:39 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,41 +18,55 @@ void	handle_forks(sem_t *sem, int (*forker)(sem_t *))
 	forker(sem);
 }
 
-int	monitoring(t_share *share)
+void	*monitoring(void *share)
 {
+	t_share *shr;
+
+	shr = (t_share *)share;
 	while (1)
 	{
-		if (share->philo.last_time_eat && get_time() 
-		- share->philo.last_time_eat > (unsigned long)share->info.time_to_die)
+		if (shr->philo.last_time_eat && get_time() 
+		- shr->philo.last_time_eat > (unsigned long)shr->info.time_to_die)
 		{
-			print_helper(share, "died");
-			kill(share->pids[share->philo.id], SIGUSR1);
+			sem_wait(shr->print_kill_sem);
+			print_helper(share, SKILL);
+			sem_wait(shr->print_sem);
+			shr->killed = 1;
+			sem_post(shr->dead_sem);
+			sem_post(shr->print_kill_sem);
+			return (NULL);
 		}
+		if (shr->philo.curr_eat_amount == shr->info.num_each_must_eat)
+		{
+			sem_post(shr->dead_sem);
+			return (NULL);
+		}
+		usleep(1000);
 	}
-	return (0);
 }
 
 void	start_philo_act(t_share *share)
 {
-	pthread_t monitor;
-
-	pthread_cre
 	if (share->philo.id % 2 == 0)
 		ft_usleep(50);
-	while (1)
+	while (!share->killed)
 	{
 		handle_forks(share->sem, sem_wait);
 		print_helper(share, "has taken a fork");
 		print_helper(share, "has taken a fork");
 		print_helper(share, "is eating");
 		ft_usleep(share->info.time_to_eat);
-		handle_forks(share->sem, sem_post);
 		share->philo.last_time_eat = get_time();
 		share->philo.curr_eat_amount++;
-		print_helper(share, "is sleeping");
-		ft_usleep(share->info.time_to_sleep);
-		print_helper(share, "is thinking");
+		handle_forks(share->sem, sem_post);
+		if (!share->killed)
+		{
+			print_helper(share, "is sleeping");
+			ft_usleep(share->info.time_to_sleep);
+			print_helper(share, "is thinking");
+		}
 	}
+	
 }
 
 void	wait_all_pids(int *pids, int num_of_forks)
@@ -66,20 +80,54 @@ void	wait_all_pids(int *pids, int num_of_forks)
 }
 
 
+void	kill_all_pids(int *pids, int num_of_forks)
+{
+	int	i;
+
+	i = 0;
+	while (i < num_of_forks)
+	{
+		kill(pids[i++], SIGTERM);
+	}
+	
+}
+
+void	handle_killing(t_share	*share)
+{
+	int	checker;
+	int	i;
+
+	i = 0;
+	checker = fork();
+	if (checker == 0)
+	{
+		sem_wait(share->dead_sem);
+		while (i < share->info.num_of_philo)
+			kill(share->pids[i++], SIGTERM);
+		sem_post(share->dead_sem);
+		exit(EXIT_SUCCESS);
+	}
+}
+
 void	run_simulation(t_share *share)
 {
+	pthread_t monitor;
 
+	sem_wait(share->dead_sem);
 	while (share->philo.id < share->info.num_of_philo)
 	{
 		share->pids[share->philo.id] = fork();
 		if (share->pids[share->philo.id] == 0)
 		{
+			pthread_create(&monitor, NULL, monitoring, share);
 			start_philo_act(share);
+			pthread_detach(monitor);
 			exit(EXIT_SUCCESS);
 		}
 		else if (share->pids[share->philo.id] < 0)
 			exit(EXIT_FAILURE);
 		share->philo.id++;
 	}
+	handle_killing(share);
 	wait_all_pids(share->pids, share->info.num_of_philo);
 }

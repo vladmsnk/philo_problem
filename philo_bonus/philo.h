@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlad <vlad@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 18:20:30 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/05/25 15:43:14 by vlad             ###   ########.fr       */
+/*   Updated: 2022/06/01 16:28:32 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,14 @@
 
 # define SNAME "/mysem"
 # define SPRINT "/prsem"
+# define SDEAD "/dsem"
+# define SKILL "/skill"
 
 typedef	struct s_philo
 {
 	int				id;
 	unsigned long	last_time_eat;
-	unsigned int	curr_eat_amount;
+	int	curr_eat_amount;
 }	t_philo;
 
 typedef struct s_info
@@ -52,18 +54,22 @@ typedef struct s_share
 {
 	sem_t	*sem;
 	sem_t	*print_sem;
+	sem_t	*dead_sem;
+	sem_t	*print_kill_sem;
 	int		*pids;
+	int		killed;
 	t_info	info;
 	t_philo philo;
 }	t_share;
 
 
-int	init_params(t_share *share, int argc, char **argv);
-int	init_share(t_share *share);
-int	ft_atoi(const char *str);
+int				init_params(t_share *share, int argc, char **argv);
+int				init_share(t_share *share);
+int				ft_atoi(const char *str);
 unsigned long	get_time(void);
-void    print_helper(t_share *share, char *message);
-void	ft_usleep(int time_to_wait);
-void	run_simulation(t_share *share);
+void    		print_helper(t_share *share, char *message);
+void			ft_usleep(int time_to_wait);
+void			run_simulation(t_share *share);
+void			close_sems(t_share *share);
 
 #endif

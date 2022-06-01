@@ -21,22 +21,53 @@ int	init_params(t_share *share, int argc, char **argv)
 	return (0);
 }
 
-
-int	init_share(t_share *share)
+void close_sems(t_share *share)
 {
-	int	num_of_p;
+	sem_close(share->sem);
+	sem_close(share->print_sem);
+	sem_close(share->dead_sem);
+	sem_close(share->print_kill_sem);
+	sem_unlink(SNAME);
+	sem_unlink(SPRINT);
+	sem_unlink(SDEAD);
+	sem_unlink("kills");
+}
 
-	num_of_p = share->info.num_of_philo;
+
+int	init_sems(t_share *share)
+{
+	close_sems(share);
 	share->print_sem = sem_open(SPRINT, O_CREAT, 0644, 1);
 	if (share->print_sem == SEM_FAILED)
 		return (0);
-	share->sem = sem_open(SNAME, O_CREAT, 0644, num_of_p);
+	share->sem = sem_open(SNAME, O_CREAT, 0644, share->info.num_of_philo);
 	if (share->sem == SEM_FAILED)
 	{
 		sem_close(share->print_sem);
 		sem_unlink(SPRINT);
 		return (0);
 	}
+	share->dead_sem = sem_open(SDEAD, O_CREAT, 0644, 1);
+	if (share->dead_sem == SEM_FAILED)
+	{
+		sem_close(share->print_sem);
+		sem_close(share->sem);
+		sem_unlink(SPRINT);
+		sem_unlink(SDEAD);
+		return (0);
+	}
+	share->print_kill_sem = sem_open("kills", O_CREAT, 0644, 1);
+	return (1);
+}
+
+
+int	init_share(t_share *share)
+{
+	int	num_of_p;
+
+	num_of_p = share->info.num_of_philo;
+	if (!init_sems(share))
+		return (0);
 	share->pids = (int *)malloc(sizeof(int) * num_of_p);
 	if (!share->pids)
 	{
@@ -45,6 +76,7 @@ int	init_share(t_share *share)
 		return (0);
 	}
 	share->philo.id = 0;
+	share->killed = 0;
 	share->philo.last_time_eat = 0;
 	share->philo.curr_eat_amount = 0;
 	memset(share->pids, 1, num_of_p);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vlad <vlad@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/18 18:22:42 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/05/25 14:05:28 by vlad             ###   ########.fr       */
+/*   Updated: 2022/06/01 16:56:28 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int main(int argc, char **argv)
 
 	if (init_params(&share, argc, argv) && init_share(&share))
 	{
-		run_simulation(&share);
+		if (share.info.num_of_philo > 1)
+			run_simulation(&share);
 	}
 	
 	return (0);
