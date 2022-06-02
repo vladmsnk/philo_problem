@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:14:34 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/06/01 18:28:54 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/02 14:30:28 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,8 @@ void	*philo_action(void *data)
 	t_philo	*curr_philo;
 
 	curr_philo = (t_philo *)data;
-	if (!curr_philo->info->sharable.started)
-	{
-		if (curr_philo->id % 2 == 1)
-			ft_usleep(50);
-		curr_philo->info->sharable.started = 1;
-	}
+	if (curr_philo->id % 2 == 1)
+		ft_usleep(50);
 	while (!curr_philo->info->sharable.signal)
 	{
 		handle_forks(curr_philo, pthread_mutex_lock);
@@ -44,19 +40,19 @@ int	test_philo_live(t_philo *philos, int num, int i, int *flags)
 {
 	static int	sum;
 
-	if (philos[i].last_time_eat && get_time()
-		- philos[i].last_time_eat > (unsigned long)philos[i].info->time_to_die)
-	{
-		print_info(&philos[i], "died");
-		philos->info->sharable.signal = 1;
-		return (1);
-	}
 	if (philos->info->num_each_must_eat > 0
 		&& philos[i].eat_amount >= philos->info->num_each_must_eat)
 	{
 		if (!flags[i])
 			sum++;
 		flags[i] = 1;
+	}
+	if (philos[i].last_time_eat && get_time()
+		- philos[i].last_time_eat > (unsigned long)philos[i].info->time_to_die)
+	{
+		print_info(&philos[i], "died");
+		philos->info->sharable.signal = 1;
+		return (1);
 	}
 	if (sum == num)
 	{
@@ -91,8 +87,8 @@ int	monitoring(t_philo *philos)
 	{
 		if (test_philo_live(philos, philos[0].info->num_of_philo, i, flags))
 			return (1);
-		i = (i == philos[0].info->num_of_philo) * 0
-			+ (i != philos[0].info->num_of_philo) * (i + 1);
+		i = (i == philos[0].info->num_of_philo - 1) * 0
+			+ (i != philos[0].info->num_of_philo - 1) * (i + 1);
 	}
 	return (0);
 }
@@ -117,10 +113,7 @@ void	run_simulation(t_philo *philos)
 	{
 		i = 0;
 		while (i < num)
-		{
-			pthread_join(threads[i], NULL);
-			i++;
-		}
+			pthread_join(threads[i++], NULL);
 	}
 	free(threads);
 }

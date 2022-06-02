@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/01 18:31:25 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/06/01 18:50:00 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/02 14:37:08 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void	print_helper(t_share *share, char *message)
 {
 	sem_wait(share->print_sem);
 	printf("%lu %d %s\n",
-			get_time() - share->info.time_of_start,
-			share->philo.id, message);
+		get_time() - share->info.time_of_start,
+		share->philo.id, message);
 	sem_post(share->print_sem);
 }
 

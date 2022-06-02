@@ -6,7 +6,7 @@
 /*   By: jjhezane <jjhezane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/17 19:17:30 by jjhezane          #+#    #+#             */
-/*   Updated: 2022/06/01 18:29:09 by jjhezane         ###   ########.fr       */
+/*   Updated: 2022/06/02 14:28:36 by jjhezane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	destroy_mutexes(t_info *info)
 	i = 0;
 	while (i < info->num_of_philo)
 		pthread_mutex_destroy(&info->sharable.forks[i++]);
+	pthread_mutex_destroy(&info->sharable.cout);
 	free(info->sharable.forks);
 }
 
